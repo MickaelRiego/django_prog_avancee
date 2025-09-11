@@ -14,3 +14,8 @@ complétez votre modèle avec Rayon (migration 002)3
 
 09/09/2025
 TP 1 finis
+TD2 commencé: premier poduit ajouter par la page admin
+
+11/09/2025
+TD2 fini
+Tout fonctionne correctement, aucune difficulté particulière
