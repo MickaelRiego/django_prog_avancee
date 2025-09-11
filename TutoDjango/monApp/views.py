@@ -1,13 +1,19 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 
 from monApp.models import Categorie, Produit, Statut
 
 def home(request, param=None):
-    if param != None:
-        return HttpResponse("<h1>Bonjour "+param+" !</h1>")
-    else:
-        return HttpResponse("<h1>Asalamalaykum !</h1>")
+    if request.GET and request.GET['test']:
+        raise Http404
+    return HttpResponse("Hello World!")
+
+def accueil(request, param="Anon"):
+    return HttpResponse("<h1>Hello " + param + " ! You're connected</h1>")
+
+def ma_vue(request):
+    return JsonResponse({'foo':'bar'})
+
     
 def contact_us(request):
     return HttpResponse("<p>Ici un formulaire</p>")
@@ -17,10 +23,7 @@ def about_us(request):
 
 def list_produits(request):
     prdts = Produit.objects.all()
-    page = "<ul>"
-    for i in range(len(prdts)):
-        page += f"<li>{prdts[i]}</li>"
-    return HttpResponse(page+"</ul>")
+    return render(request, "monApp/list_produit.html", {'prdts': prdts})
 
 def list_categories(request):
     cats = Categorie.objects.all()

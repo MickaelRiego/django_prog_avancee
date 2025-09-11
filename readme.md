@@ -19,3 +19,5 @@ TD2 commencé: premier poduit ajouter par la page admin
 11/09/2025
 TD2 fini
 Tout fonctionne correctement, aucune difficulté particulière
+
+TP2 : je suis a la page 9, j'ai la template pour faire la liste des produits
