@@ -21,3 +21,7 @@ TD2 fini
 Tout fonctionne correctement, aucune difficulté particulière
 
 TP2 : je suis a la page 9, j'ai la template pour faire la liste des produits
+
+16/09/2025
+TP2 : Bootstrap fonctionnel 
+Tp2 : fini

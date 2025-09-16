@@ -1,0 +1,14 @@
+{%extends "monApp/base.html"%}
+
+{%block contenu%}
+
+<h1>Liste de nos categories</h1>
+<p>Voici la liste</p>
+<ul>
+    {% for categ in categs %}
+    <li>{{categ.nomCat | upper}}</li>
+    {% endfor %}
+</ul>
+<p>Il y a {{categs | length}} produits.</p>
+
+{%endblock%}

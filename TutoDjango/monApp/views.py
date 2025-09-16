@@ -16,26 +16,20 @@ def ma_vue(request):
 
     
 def contact_us(request):
-    return HttpResponse("<p>Ici un formulaire</p>")
+    return render(request, "monApp/contact.html")
 
 def about_us(request):
-    return HttpResponse("<p>Ici le about us</p>")
+    return render(request, "monApp/about.html")
 
 def list_produits(request):
     prdts = Produit.objects.all()
     return render(request, "monApp/list_produit.html", {'prdts': prdts})
 
 def list_categories(request):
-    cats = Categorie.objects.all()
-    page = "<ul>"
-    for i in range(len(cats)):
-        page += f"<li>{cats[i]}</li>"
-    return HttpResponse(page+"</ul>")
+    categs = Categorie.objects.all()
+    return render(request, "monApp/list_categorie.html", {'categs': categs})
 
 def list_status(request):
-    stats = Statut.objects.all()
-    page = "<ul>"
-    for i in range(len(stats)):
-        page += f"<li>{stats[i]}</li>"
-    return HttpResponse(page+"</ul>")
+    status = Statut.objects.all()
+    return render(request, "monApp/list_statut.html", {'status': status})
         
