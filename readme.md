@@ -25,3 +25,7 @@ TP2 : je suis a la page 9, j'ai la template pour faire la liste des produits
 16/09/2025
 TP2 : Bootstrap fonctionnel 
 Tp2 : fini
+
+18/09/2025
+TD3 : J'en suis à la page 8, j'ai fais produitListView et produitDetailView. Maintenant je fais pour catégorie
+TODO : Toute les listView et detail de catégorie
