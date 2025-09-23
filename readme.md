@@ -29,3 +29,8 @@ Tp2 : fini
 18/09/2025
 TD3 : J'en suis à la page 8, j'ai fais produitListView et produitDetailView. Maintenant je fais pour catégorie
 TODO : Toute les listView et detail de catégorie
+
+23/09/2025
+TODO fait
+Authentification mise
+Modification de ContactView

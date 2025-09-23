@@ -1,0 +1,14 @@
+{%extends "monApp/base.html"%}
+
+{%block contenu%}
+
+<h1>Liste de nos rayons</h1>
+<p>Voici la liste</p>
+<ul>
+    {% for rayon in rayons %}
+    <li><a href="#">{{ rayon.nomRayon | upper }}</a></li>
+    {% endfor %}
+</ul>
+<p>Il y a {{rayons | length}} rayonns.</p>
+
+{%endblock%}

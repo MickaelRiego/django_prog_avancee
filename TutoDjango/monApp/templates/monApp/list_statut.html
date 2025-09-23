@@ -6,7 +6,7 @@
 <p>Voici la liste</p>
 <ul>
     {% for statut in status %}
-    <li>{{statut.libelleStatus | upper}}</li>
+    <li><a href="{% url 'detail_statut' statut.idStatus %}">{{ statut.libelleStatus | upper }}</a></li>
     {% endfor %}
 </ul>
 <p>Il y a {{status | length}} produits.</p>

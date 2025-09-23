@@ -1,8 +1,12 @@
+from urllib import request
 from django.shortcuts import render
 from django.http import Http404, HttpResponse, JsonResponse
 
-from monApp.models import Categorie, Produit, Statut
+from monApp.forms import ContactUsForm
+from monApp.models import Categorie, Produit, Rayon, Statut
 from django.views.generic import *
+from django.contrib.auth.views import *
+from django.core.mail import *
 
 
 def accueil(request, param="Anon"):
@@ -57,17 +61,23 @@ class AboutView(TemplateView):
     def post(self, request, **kwargs):
         return render(request, self.template_name)
     
-class ContactView(TemplateView):
-    template_name = "monApp/page_home.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(ContactView, self).get_context_data(**kwargs)
-        context['titreh1'] = "Nous Contacter"
-        return context
+from django.shortcuts import redirect
     
-    def post(self, request, **kwargs):
-        return render(request, self.template_name)
-    
+def ContactView(request):
+    titreh1 = "Contact us !"
+    if request.method=='POST':
+        form = ContactUsForm(request.POST)
+        if form.is_valid():
+            send_mail(
+            subject=f'Message from {form.cleaned_data["name"] or "anonyme"} via MonProjet Contact Us form',
+            message=form.cleaned_data['message'],
+            from_email=form.cleaned_data['email'],
+            recipient_list=['admin@monprojet.com'],
+            )
+            return redirect('email-sent')
+    else:
+        form = ContactUsForm()
+    return render(request, "monApp/page_home.html",{'titreh1':titreh1, 'form':form})
 
 class ProduitListView(ListView):
     model = Produit
@@ -95,7 +105,7 @@ class ProduitDetailView(DetailView):
 class CategorieListView(ListView):
     model = Categorie
     template_name = "monApp/list_categorie.html"
-    context_object_name = "categ"
+    context_object_name = "categs"
     
     def get_context_data(self, **kwargs):
         context = super(CategorieListView, self).get_context_data(**kwargs)
@@ -103,7 +113,7 @@ class CategorieListView(ListView):
         return context
 
 class CategorieDetailView(DetailView):
-    model = Produit
+    model = Categorie
     template_name = "monApp/detail_categorie.html"
     context_object_name = "categ"
 
@@ -111,3 +121,67 @@ class CategorieDetailView(DetailView):
         context = super(CategorieDetailView, self).get_context_data(**kwargs)
         context['titremenu'] = "Détail de la catégorie"
         return context
+    
+class StatutListView(ListView):
+    model = Statut
+    template_name = "monApp/list_statut.html"
+    context_object_name = "status"
+    
+    def get_context_data(self, **kwargs):
+        context = super(StatutListView, self).get_context_data(**kwargs)
+        context['titremenu'] = "Liste de mes statut"
+        return context
+
+class StatutDetailView(DetailView):
+    model = Statut
+    template_name = "monApp/detail_statut.html"
+    context_object_name = "statut"
+
+    def get_context_data(self, **kwargs):
+        context = super(StatutDetailView, self).get_context_data(**kwargs)
+        context['titremenu'] = "Détail du statut"
+        return context
+    
+class RayonListView(ListView):
+    model = Rayon
+    template_name = "monApp/list_rayon.html"
+    context_object_name = "rayons"
+
+    def get_context_data(self, **kwargs):
+        context = super(RayonListView, self).get_context_data(**kwargs)
+        context['titremenu'] = "Liste de mes rayons"
+        return context
+    
+class ConnectView(LoginView):
+
+    template_name = 'monApp/page_login.html'
+
+    def post(self, request, **kwargs):
+        lgn = request.POST.get('username', False)
+        pswrd = request.POST.get('password', False)
+        user = authenticate(username=lgn, password=pswrd)
+        if user is not None and user.is_active:
+            login(request, user)
+            return render(request, 'monApp/page_home.html', {'param': lgn, 'message': "You're connected"})
+        else:
+            return render(request, 'monApp/page_register.html')
+        
+class RegisterView(TemplateView):
+    template_name = 'monApp/page_register.html'
+
+    def post(self, request, **kwargs):
+        username = request.POST.get('username', False)
+        mail = request.POST.get('mail', False)
+        password = request.POST.get('password', False)
+        user = User.objects.create_user(username, mail, password)
+        user.save()
+        if user is not None and user.is_active:
+            return render(request, 'monApp/page_login.html')
+        else:
+            return render(request, 'monApp/page_register.html')
+        
+class DisconnectView(TemplateView):
+    template_name = 'monApp/page_logout.html'
+    def get(self, request, **kwargs):
+        logout(request)
+        return render(request, self.template_name)
