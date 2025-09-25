@@ -22,6 +22,7 @@ urlpatterns = [
     path ('register/', views.RegisterView.as_view(), name='register'),
     path ('logout/', views.DisconnectView.as_view(), name='logout'),
     path ('email-sent/', views.EmailSentView.as_view(), name='email-sent'),
+    path ("produit/", views.ProduitCreateView.as_view(), name="create_produit"),
 
 ]
 

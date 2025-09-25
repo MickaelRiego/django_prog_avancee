@@ -62,3 +62,6 @@
 
 ## 25/09/2025
 - **TD3 finis**
+- **Formlaire création produit** avec validation coté client
+- **Vue générique** page 6
+- **TO DO** page 7
