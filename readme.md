@@ -1,36 +1,64 @@
-02/09/2025 : 
-TD1 finis, tout fonctionnel (home/,home/<param>,about_us,contact_us)
+# Journal de développement
 
-04/09/2025 : 
-Produit, Rayon, Catégorie
+## 02/09/2025
+- **TD1 terminé** : Toutes les fonctionnalités sont opérationnelles
+  - Pages : `home/`, `home/<param>`, `about_us`, `contact_us`
 
-complétez votre modèle avec Rayon (migration 002)3
-• ajoutez Contenir et mettez en œuvre une relation Many-To-Many (migration 003)004
-• modifiez votre modèle tel qu’un produit possède une date de fabrication (migration 004)005
-• ajoutez une entité Statut composée d’un identifiant et d’un libelle (migration 005)006
-• modifiez votre modèle tel qu’un produit possède un statut (migration 006)007
+---
 
---Essai de faire les commande en shell, mais problèmes avec le Statut, ça ne répère pas la FK dans Produit
+## 04/09/2025
+- **Modélisation des entités** :
+  - Ajout des modèles : **Produit**, **Rayon**, **Catégorie**
+  - Migration 002 : Ajout de l’entité **Rayon**
+  - Migration 003/004 : Ajout de la table **Contenir** (relation Many-To-Many)
+  - Migration 004/005 : Ajout d’une **date de fabrication** pour les produits
+  - Migration 005/006 : Ajout de l’entité **Statut** (id, libellé)
+  - Migration 006/007 : Ajout d’un **statut** pour chaque produit
+- **Problème rencontré** :
+  - Difficulté avec les commandes shell pour le **Statut** : la clé étrangère (FK) n’est pas reconnue dans **Produit**
 
-09/09/2025
-TP 1 finis
-TD2 commencé: premier poduit ajouter par la page admin
+---
 
-11/09/2025
-TD2 fini
-Tout fonctionne correctement, aucune difficulté particulière
+## 09/09/2025
+- **TP 1 terminé**
+- **TD2 commencé** :
+  - Premier produit ajouté via la page **admin**
 
-TP2 : je suis a la page 9, j'ai la template pour faire la liste des produits
+---
 
-16/09/2025
-TP2 : Bootstrap fonctionnel 
-Tp2 : fini
+## 11/09/2025
+- **TD2 terminé** :
+  - Tout fonctionne correctement, sans difficulté particulière
+- **TP2** :
+  - Avancement : page 9
+  - Template pour la **liste des produits** créée
 
-18/09/2025
-TD3 : J'en suis à la page 8, j'ai fais produitListView et produitDetailView. Maintenant je fais pour catégorie
-TODO : Toute les listView et detail de catégorie
+---
 
-23/09/2025
-TODO fait
-Authentification mise
-Modification de ContactView
+## 16/09/2025
+- **TP2** :
+  - **Bootstrap** intégré et fonctionnel
+  - TP2 **terminé**
+
+---
+
+## 18/09/2025
+- **TD3** :
+  - Avancement : page 8
+  - Implémentation de :
+    - `produitListView`
+    - `produitDetailView`
+  - **TODO** : `listView` et `detailView` pour les **catégories**
+
+---
+
+## 23/09/2025
+- **TODO terminé** :
+  - Toutes les vues (`listView`, `detailView`) pour les catégories implémentées
+- **Authentification** mise en place
+- **Modification de `ContactView`**
+- **Prochaine étape** :
+  - Page 18 : Finalisation de l’envoi d’**emails** (`email-sent`)
+
+## 25/09/2025
+- **TD3 finis**

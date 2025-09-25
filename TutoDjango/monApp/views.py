@@ -185,3 +185,9 @@ class DisconnectView(TemplateView):
     def get(self, request, **kwargs):
         logout(request)
         return render(request, self.template_name)
+    
+class EmailSentView(TemplateView):
+    template_name = 'monApp/email_sent.html'
+    
+    def get(self, request, **kwargs):
+        return render(request, self.template_name)

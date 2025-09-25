@@ -18,9 +18,10 @@ urlpatterns = [
     path ("statuts/", views.StatutListView.as_view(), name="liste_statut"),
     path ("statut/<pk>", views.StatutDetailView.as_view(), name="detail_statut"),
     path ("rayons/", views.RayonListView.as_view(), name="liste_rayon"),
-    path('login/', views.ConnectView.as_view(), name='login'),
-    path('register/', views.RegisterView.as_view(), name='register'),
-    path('logout/', views.DisconnectView.as_view(), name='logout'),
+    path ('login/', views.ConnectView.as_view(), name='login'),
+    path ('register/', views.RegisterView.as_view(), name='register'),
+    path ('logout/', views.DisconnectView.as_view(), name='logout'),
+    path ('email-sent/', views.EmailSentView.as_view(), name='email-sent'),
 
 ]
 
