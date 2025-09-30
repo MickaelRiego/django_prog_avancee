@@ -2,8 +2,9 @@ from urllib import request
 from django.forms import BaseModelForm
 from django.shortcuts import render
 from django.http import Http404, HttpResponse, JsonResponse
+from django.urls import reverse_lazy
 
-from monApp.forms import ContactUsForm, ProduitForm
+from monApp.forms import CategorieForm, ContactUsForm, ProduitForm, RayonForm
 from monApp.models import Categorie, Produit, Rayon, Statut
 from django.views.generic import *
 from django.contrib.auth.views import *
@@ -152,6 +153,16 @@ class RayonListView(ListView):
         context = super(RayonListView, self).get_context_data(**kwargs)
         context['titremenu'] = "Liste de mes rayons"
         return context
+
+class RayonDetailView(DetailView):
+    model = Rayon
+    template_name = "monApp/detail_rayon.html"
+    context_object_name = "rayon"
+
+    def get_context_data(self, **kwargs):
+        context = super(RayonDetailView, self).get_context_data(**kwargs)
+        context['titremenu'] = "Détail du rayon"
+        return context
     
 class ConnectView(LoginView):
 
@@ -212,3 +223,79 @@ class ProduitCreateView(CreateView):
         prdt = form.save()
         return redirect("detail_produit", prdt.refProd)
     
+
+class ProduitUpdateView(UpdateView):
+    model = Produit
+    form_class=ProduitForm
+    template_name = "monApp/update_produit.html"
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        prdt = form.save()
+        return redirect('dtl-prdt', prdt.refProd)
+    
+class ProduitDeleteView(DeleteView):
+    model = Produit
+    template_name = "monApp/delete_produit.html"
+
+    success_url = reverse_lazy('liste_produits')
+
+
+# def ProduitUpdate(request, pk):
+#     prdt = Produit.objects.get(refProd=pk)
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             # mettre à jour le produit existant dans la base de données
+#             form.save()
+#             # rediriger vers la page détaillée du produit que nous venons de mettre à jour
+#             return redirect('dtl-prdt', prdt.refProd)
+#         else:
+#             form = ProduitForm(instance=prdt)
+#         return render(request,'monApp/update_produit.html', {'form': form})
+
+class CategorieCreateView(CreateView):
+    model = Categorie
+    form_class = CategorieForm
+    template_name = "monApp/create_categorie.html"
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        categ = form.save()
+        return redirect("detail_categorie", categ.idCat)
+
+class CategorieUpdateView(UpdateView):
+    model = Categorie
+    form_class=CategorieForm
+    template_name = "monApp/update_categorie.html"
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        categ = form.save()
+        return redirect('detail_categorie', categ.idCat)
+    
+class CategorieDeleteView(DeleteView):
+    model = Categorie
+    template_name = "monApp/delete_categorie.html"
+
+    success_url = reverse_lazy('liste_categories')
+
+class RayonCreateView(CreateView):
+    model = Rayon
+    form_class = RayonForm
+    template_name = "monApp/create_rayon.html"
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        rayon = form.save()
+        return redirect("liste_rayons")
+
+class RayonUpdateView(UpdateView):
+    model = Rayon
+    form_class= RayonForm
+    template_name = "monApp/update_rayon.html"
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        rayon = form.save()
+        return redirect("detail_rayon", rayon.idRayon)
+    
+class RayonDeleteView(DeleteView):
+    model = Rayon
+    template_name = "monApp/delete_rayon.html"
+
+    success_url = reverse_lazy('liste_rayons')

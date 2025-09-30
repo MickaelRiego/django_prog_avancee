@@ -1,6 +1,6 @@
 from django import forms
 
-from monApp.models import Produit
+from monApp.models import Categorie, Produit, Rayon
 
 
 class ContactUsForm(forms.Form):
@@ -13,3 +13,13 @@ class ProduitForm(forms.ModelForm):
         model = Produit
         exclude = ('categorie', 'status')
         # fields = '__all__'
+
+class CategorieForm(forms.ModelForm):
+    class Meta:
+        model = Categorie
+        fields = "__all__"
+
+class RayonForm(forms.ModelForm):
+    class Meta:
+        model = Rayon
+        fields = "__all__"

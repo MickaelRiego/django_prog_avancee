@@ -65,3 +65,7 @@
 - **Formlaire création produit** avec validation coté client
 - **Vue générique** page 6
 - **TO DO** page 7
+
+## 30/09/2025
+- **TP3 finis**
+- create/delete/change fait pour produit, categorie et rayons

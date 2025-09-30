@@ -24,6 +24,9 @@
                                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'liste_categories' %}">Categories</a>
                 </li>
+                                                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'liste_rayons' %}">Rayons</a>
+                </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Déconnexion</a>

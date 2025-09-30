@@ -9,6 +9,7 @@
     <li><a href="{% url 'detail_categorie' categ.idCat %}">{{ categ.nomCat | upper }}</a></li>
     {% endfor %}
 </ul>
+<a href="{% url 'create_categorie' %}">Créer une nouvelle catégorie</a>
 <p>Il y a {{categs | length}} produits.</p>
 
 {%endblock%}

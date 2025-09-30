@@ -17,12 +17,21 @@ urlpatterns = [
     path ("categorie/<pk>", views.CategorieDetailView.as_view(), name="detail_categorie"),
     path ("statuts/", views.StatutListView.as_view(), name="liste_statut"),
     path ("statut/<pk>", views.StatutDetailView.as_view(), name="detail_statut"),
-    path ("rayons/", views.RayonListView.as_view(), name="liste_rayon"),
+    path ("rayons/", views.RayonListView.as_view(), name="liste_rayons"),
+    path ("rayon/<pk>", views.RayonDetailView.as_view(), name="detail_rayon"),
     path ('login/', views.ConnectView.as_view(), name='login'),
     path ('register/', views.RegisterView.as_view(), name='register'),
     path ('logout/', views.DisconnectView.as_view(), name='logout'),
     path ('email-sent/', views.EmailSentView.as_view(), name='email-sent'),
     path ("produit/", views.ProduitCreateView.as_view(), name="create_produit"),
+    path ("produit/<pk>/update/",views.ProduitUpdateView.as_view(), name="prdt-chng"),
+    path ("produit/<pk>/delete/", views.ProduitDeleteView.as_view(), name="prdt-dlt"),
+    path ("categorie/", views.CategorieCreateView.as_view(), name="create_categorie"),
+    path ("categorie/<pk>/update/", views.CategorieUpdateView.as_view(), name="categ-chng"),
+    path ("categorie/<pk>/delete/", views.CategorieDeleteView.as_view(), name="categ-dlt"),
+    path ("rayon/", views.RayonCreateView.as_view(), name="create_rayon"),
+    path ("rayon/<pk>/update/", views.RayonUpdateView.as_view(), name="rayon-chng"),
+    path ("rayon/<pk>/delete/", views.RayonDeleteView.as_view(), name="rayon-dlt"),
 
 ]
 
