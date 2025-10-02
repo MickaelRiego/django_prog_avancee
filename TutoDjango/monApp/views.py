@@ -9,7 +9,7 @@ from monApp.models import Categorie, Produit, Rayon, Statut
 from django.views.generic import *
 from django.contrib.auth.views import *
 from django.core.mail import *
-
+from django.db.models import Count
 
 def accueil(request, param="Anon"):
     return HttpResponse("<h1>Hello " + param + " ! You're connected</h1>")
@@ -107,7 +107,11 @@ class ProduitDetailView(DetailView):
 class CategorieListView(ListView):
     model = Categorie
     template_name = "monApp/list_categorie.html"
-    context_object_name = "categs"
+    context_object_name = "ctgrs"
+
+    def get_queryset(self):
+        # Annoter chaque catégorie avec le nombre de produits liés
+        return Categorie.objects.annotate(nb_produits=Count('produit'))
     
     def get_context_data(self, **kwargs):
         context = super(CategorieListView, self).get_context_data(**kwargs)
@@ -117,17 +121,26 @@ class CategorieListView(ListView):
 class CategorieDetailView(DetailView):
     model = Categorie
     template_name = "monApp/detail_categorie.html"
-    context_object_name = "categ"
+    context_object_name = "ctgr"
+
+    def get_queryset(self):
+        # Annoter chaque catégorie avec le nombre de produits liés
+        return Categorie.objects.annotate(nb_produits=Count('produit'))
 
     def get_context_data(self, **kwargs):
         context = super(CategorieDetailView, self).get_context_data(**kwargs)
         context['titremenu'] = "Détail de la catégorie"
+        context['prdts'] = Produit.objects.filter(categorie=self.object)
         return context
     
 class StatutListView(ListView):
     model = Statut
     template_name = "monApp/list_statut.html"
     context_object_name = "status"
+    
+    def get_queryset(self):
+        # Annoter chaque statut avec le nombre de produits liés
+        return Statut.objects.annotate(nb_produits=Count('produit'))
     
     def get_context_data(self, **kwargs):
         context = super(StatutListView, self).get_context_data(**kwargs)
@@ -139,9 +152,14 @@ class StatutDetailView(DetailView):
     template_name = "monApp/detail_statut.html"
     context_object_name = "statut"
 
+    def get_queryset(self):
+        # Annoter chaque statut avec le nombre de produits liés
+        return Statut.objects.annotate(nb_produits=Count('produit'))
+
     def get_context_data(self, **kwargs):
         context = super(StatutDetailView, self).get_context_data(**kwargs)
         context['titremenu'] = "Détail du statut"
+        context['prdts'] = Produit.objects.filter(status=self.object)
         return context
     
 class RayonListView(ListView):
@@ -209,7 +227,7 @@ class EmailSentView(TemplateView):
 #         form = ProduitForm(request.POST)
 #         if form.is_valid():
 #             prdt = form.save()
-#             return redirect('detail_produit', prdt.refProd)
+#             return redirect('prdt-dtl', prdt.refProd)
 #     else:
 #         form = ProduitForm()
 #         return render(request, "monApp/create_produit.html", {'form': form})
@@ -221,7 +239,7 @@ class ProduitCreateView(CreateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         prdt = form.save()
-        return redirect("detail_produit", prdt.refProd)
+        return redirect("prdt-dtl", prdt.refProd)
     
 
 class ProduitUpdateView(UpdateView):
@@ -231,7 +249,7 @@ class ProduitUpdateView(UpdateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         prdt = form.save()
-        return redirect('dtl-prdt', prdt.refProd)
+        return redirect('prdt-dtl', prdt.refProd)
     
 class ProduitDeleteView(DeleteView):
     model = Produit
@@ -247,7 +265,7 @@ class ProduitDeleteView(DeleteView):
 #             # mettre à jour le produit existant dans la base de données
 #             form.save()
 #             # rediriger vers la page détaillée du produit que nous venons de mettre à jour
-#             return redirect('dtl-prdt', prdt.refProd)
+#             return redirect('prdt-dtl', prdt.refProd)
 #         else:
 #             form = ProduitForm(instance=prdt)
 #         return render(request,'monApp/update_produit.html', {'form': form})
@@ -259,7 +277,7 @@ class CategorieCreateView(CreateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         categ = form.save()
-        return redirect("detail_categorie", categ.idCat)
+        return redirect("categ-dtl", categ.idCat)
 
 class CategorieUpdateView(UpdateView):
     model = Categorie
@@ -268,13 +286,13 @@ class CategorieUpdateView(UpdateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         categ = form.save()
-        return redirect('detail_categorie', categ.idCat)
+        return redirect('categ-dtl', categ.idCat)
     
 class CategorieDeleteView(DeleteView):
     model = Categorie
     template_name = "monApp/delete_categorie.html"
 
-    success_url = reverse_lazy('liste_categories')
+    success_url = reverse_lazy('lst-ctgrs')
 
 class RayonCreateView(CreateView):
     model = Rayon
@@ -292,7 +310,7 @@ class RayonUpdateView(UpdateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         rayon = form.save()
-        return redirect("detail_rayon", rayon.idRayon)
+        return redirect("rayon-dtl", rayon.idRayon)
     
 class RayonDeleteView(DeleteView):
     model = Rayon

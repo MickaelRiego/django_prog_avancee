@@ -16,12 +16,16 @@
         {% for prdt in prdts %}
         <tr>
             <td>{{ prdt.refProd }} </td>
-            <td><a href="{% url 'detail_produit' prdt.refProd %}">{{ prdt.intituleProd }}</a> </td>
+            <td><a href="{% url 'prdt-dtl' prdt.refProd %}">{{ prdt.intituleProd }}</a> </td>
             <td>{{ prdt.prixUnitaireProd }} </td>
             <td>{{ prdt.dateFabProd }} </td>
             <td>{{ prdt.categorie }} </td>
             <td>{{ prdt.status }} </td>
-            <td><a href="{% url 'prdt-chng' prdt.refProd %}">modifier</a></td>
+            <td>
+                <a href="{% url 'prdt-dtl' prdt.refProd %}" class="btn btn-primary mt-2">Détails</a>
+                <a href="{% url 'prdt-chng' prdt.refProd %}" class="btn btn-warning mt-2">Modifier</a>
+                <a href="{% url 'prdt-dlt' prdt.refProd %}" class="btn btn-danger mt-2">Supprimer</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
@@ -30,5 +34,5 @@
     J'ai
     {% if prdts|length < 5 %} peu de {% elif prdts|length < 10 %} quelques {% else %} beaucoup de {% endif %} produits
         préférés. </p>
-        <a href="{% url 'create_produit' %}">Créer un nouveau produit</a>
+        <a href="{% url 'create_produit' %}" class="btn btn-primary mt-2">Créer un nouveau produit</a>
         {% endblock %}

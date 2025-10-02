@@ -3,12 +3,25 @@
 {%block contenu%}
 
 <h1>Liste de nos status</h1>
-<p>Voici la liste</p>
-<ul>
-    {% for statut in status %}
-    <li><a href="{% url 'detail_statut' statut.idStatus %}">{{ statut.libelleStatus | upper }}</a></li>
-    {% endfor %}
-</ul>
-<p>Il y a {{status | length}} produits.</p>
+
+<table class="table">
+    <thead>
+        <th>Id</th>
+        <th>Nom statut</th>
+        <th>Nombre de Produits</th>
+    </thead>
+    <tbody>
+        {% for statut in status %}
+        <tr>
+            <td><a href="{% url 'statut-dtl' statut.idStatus %}">{{ statut.idStatus }}</a></td>
+            <td>{{ statut.libelleStatus }} </td>
+            <td>{{ statut.nb_produits }} </td>
+            <td>
+                <a href="{% url 'statut-dtl' statut.idStatus %}" class="btn btn-primary mt-2">Détails</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 {%endblock%}

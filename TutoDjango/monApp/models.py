@@ -29,7 +29,7 @@ class Produit(models.Model):
     dateFabrication = models.DateField(default=date.today())
     # Relation CIF : chaque produit appartient à 1 catégorie (0,N côté catégorie -> 1,1 côté produit)
     categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE, related_name="produit", null=True, blank=True)
-    status = models.ForeignKey(Statut, on_delete=models.CASCADE, related_name="produits", null=True, blank=True)
+    status = models.ForeignKey(Statut, on_delete=models.CASCADE, related_name="produit", null=True, blank=True)
 
     def __str__(self):
         return f"{self.intituleProd} : {self.prixUnitaireProd}€"

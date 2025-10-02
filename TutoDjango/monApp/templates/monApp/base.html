@@ -21,11 +21,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'liste_produits' %}">Produits</a>
                 </li>
-                                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'liste_categories' %}">Categories</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'lst-ctgrs' %}">Categories</a>
                 </li>
-                                                <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'liste_rayons' %}">Rayons</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'liste_statut' %}">Status</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">

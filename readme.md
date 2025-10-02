@@ -70,3 +70,9 @@
 - **TP3 finis**
 - create/delete/change fait pour produit, categorie et rayons
 - **Début TD4**
+
+## 02/10/2025
+- **TD4**
+- modification de catégorie et statut
+- Fin de la page 4
+- changement du style et vérification de tout les liste views
