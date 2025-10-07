@@ -35,9 +35,12 @@ class Produit(models.Model):
         return f"{self.intituleProd} : {self.prixUnitaireProd}€"
     
 class Contenir(models.Model):
-    rayons = models.ForeignKey(Rayon, on_delete=models.CASCADE, null=False, blank=False, default=0)
-    produits = models.ForeignKey(Produit, on_delete=models.CASCADE, null=False, blank=False, default=0)
+    rayons = models.ForeignKey(Rayon, on_delete=models.CASCADE, null=False, blank=False, default=0, related_name="contenir_rayon")
+    produits = models.ForeignKey(Produit, on_delete=models.CASCADE, null=False, blank=False, default=0, related_name="contenir_produit")
     qte = models.IntegerField(default=0)
 
+    class Meta:
+        unique_together = ('rayons', 'produits')
+
     def __str__(self):
-        return f"{self.rayons} : {self.produits}"
+        return f"{self.rayons} : {self.produits} - {self.qte}"

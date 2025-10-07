@@ -10,18 +10,27 @@
         <th>Nom rayon</th>
     </thead>
     <tbody>
-        {% for rayon in rayons %}
+        {% for data in ryns_dt %}
         <tr>
-            <td><a href="{% url 'rayon-dtl' rayon.idRayon %}">{{ rayon.idRayon }}</a></td>
-            <td>{{ rayon.nomRayon }} </td>
+            <td><a href="{% url 'rayon-dtl' data.rayon.idRayon %}">{{ data.rayon.idRayon }}</a></td>
+            <td>{{ data.rayon.nomRayon }} </td>
+            <td>{{ data.rayon.nomRayon }} </td>
+            <td>{{ data.total_stock }} €</td>
             <td>
-                <a href="{% url 'rayon-dtl' rayon.idRayon %}" class="btn btn-primary mt-2">Détails</a>
-                <a href="{% url 'rayon-chng' rayon.idRayon %}" class="btn btn-warning mt-2">Modifier</a>
-                <a href="{% url 'rayon-dlt' rayon.idRayon %}" class="btn btn-danger mt-2">Supprimer</a>
+                <a href="{% url 'rayon-dtl' data.rayon.idRayon %}" class="btn btn-primary mt-2">Détails</a>
+                <a href="{% url 'rayon-chng' data.rayon.idRayon %}" class="btn btn-warning mt-2">Modifier</a>
+                <a href="{% url 'rayon-dlt' data.rayon.idRayon %}" class="btn btn-danger mt-2">Supprimer</a>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+<!-- Barre de recherche -->
+<p class="lead mb-3 ml-0">Rechercher un élément...</p>
+<form method="GET" action="">
+    <input class="form-control" type="text" name="search" placeholder="Tapez ici votre recherche"
+        value="{{ request.GET.search }}">
+    <button type="submit" class="btn btn-success mt-2">Rechercher</button>
+</form>
 <a href="{% url 'create_rayon' %}" class="btn btn-primary mt-2">Créer un nouveau rayon</a>
 {%endblock%}

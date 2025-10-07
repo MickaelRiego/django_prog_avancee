@@ -36,5 +36,8 @@ urlpatterns = [
     path ("rayon/<pk>/update/", views.RayonUpdateView.as_view(), name="rayon-chng"),
     path ("rayon/<pk>/delete/", views.RayonDeleteView.as_view(), name="rayon-dlt"),
 
+    path('rayon/<pk>/cntnr', views.ContenirCreateView.as_view(), name='cntnr-crt'),
+    path('contenir/<pk>/update', views.ContenirUpdateView.as_view(), name='cntnr-chng'),
+
 ]
 

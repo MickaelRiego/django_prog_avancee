@@ -1,15 +1,19 @@
 from urllib import request
 from django.forms import BaseModelForm
 from django.shortcuts import render
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponseNotFound, JsonResponse
 from django.urls import reverse_lazy
 
-from monApp.forms import CategorieForm, ContactUsForm, ProduitForm, RayonForm
-from monApp.models import Categorie, Produit, Rayon, Statut
+from monApp.forms import CategorieForm, ContactUsForm, ContenirForm, ProduitForm, RayonForm
+from monApp.models import Categorie, Contenir, Produit, Rayon, Statut
 from django.views.generic import *
 from django.contrib.auth.views import *
 from django.core.mail import *
-from django.db.models import Count
+from django.db.models import Count, Prefetch
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 
 def accueil(request, param="Anon"):
     return HttpResponse("<h1>Hello " + param + " ! You're connected</h1>")
@@ -86,8 +90,15 @@ class ProduitListView(ListView):
     template_name = "monApp/list_produits.html"
     context_object_name = "prdts"
 
-    def get_queryset(self ) :
-        return Produit.objects.order_by("prixUnitaireProd")
+    def get_queryset(self):
+        # Surcouche pour filtrer les résultats en fonction de la recherche
+        # Récupérer le terme de recherche depuis la requête GET
+        query = self.request.GET.get('search')
+        if query:
+            return Produit.objects.filter(intituleProd__icontains=query).select_related('categorie').select_related('status')
+            # Si aucun terme de recherche, retourner tous les produits
+            # Charge les catégories en même temps
+        return Produit.objects.select_related('categorie').select_related('status')
     
     def get_context_data(self, **kwargs):
         context = super(ProduitListView, self).get_context_data(**kwargs)
@@ -110,7 +121,13 @@ class CategorieListView(ListView):
     context_object_name = "ctgrs"
 
     def get_queryset(self):
-        # Annoter chaque catégorie avec le nombre de produits liés
+        # Surcouche pour filtrer les résultats en fonction de la recherche
+        # Récupérer le terme de recherche depuis la requête GET
+        query = self.request.GET.get('search')
+        if query:
+            return Categorie.objects.filter(nomCat__icontains=query).annotate(nb_produits=Count('produit'))
+        # Si aucun terme de recherche, retourner tous les produits
+        # Charge les catégories en même temps
         return Categorie.objects.annotate(nb_produits=Count('produit'))
     
     def get_context_data(self, **kwargs):
@@ -139,9 +156,15 @@ class StatutListView(ListView):
     context_object_name = "status"
     
     def get_queryset(self):
-        # Annoter chaque statut avec le nombre de produits liés
+        # Surcouche pour filtrer les résultats en fonction de la recherche
+        # Récupérer le terme de recherche depuis la requête GET
+        query = self.request.GET.get('search')
+        if query:
+            return Statut.objects.filter(libelleStatus__icontains=query).annotate(nb_produits=Count('produit'))
+        # Si aucun terme de recherche, retourner tous les produits
+        # Charge les catégories en même temps
         return Statut.objects.annotate(nb_produits=Count('produit'))
-    
+
     def get_context_data(self, **kwargs):
         context = super(StatutListView, self).get_context_data(**kwargs)
         context['titremenu'] = "Liste de mes statut"
@@ -167,9 +190,32 @@ class RayonListView(ListView):
     template_name = "monApp/list_rayon.html"
     context_object_name = "rayons"
 
+    def get_queryset(self):
+        # Surcouche pour filtrer les résultats en fonction de la recherche
+        # Récupérer le terme de recherche depuis la requête GET
+        query = self.request.GET.get('search')
+        if query:
+            return Rayon.objects.filter(nomRayon__icontains=query).prefetch_related(
+        Prefetch("contenir_rayon", queryset=Contenir.objects.select_related("produits"))
+        )
+        # Si aucun terme de recherche, retourner tous les produits
+        # Charge les catégories en même temps
+        return Rayon.objects.prefetch_related(
+        Prefetch("contenir_rayon", queryset=Contenir.objects.select_related("produits"))
+        )
+    
+
     def get_context_data(self, **kwargs):
         context = super(RayonListView, self).get_context_data(**kwargs)
         context['titremenu'] = "Liste de mes rayons"
+        ryns_dt = []
+        for rayon in context['rayons']:
+            total = 0
+            for contenir in rayon.contenir_rayon.all():
+                total += contenir.produits.prixUnitaireProd * contenir.qte
+                ryns_dt.append({'rayon': rayon,'total_stock': total})
+                
+        context['ryns_dt'] = ryns_dt
         return context
 
 class RayonDetailView(DetailView):
@@ -180,6 +226,23 @@ class RayonDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(RayonDetailView, self).get_context_data(**kwargs)
         context['titremenu'] = "Détail du rayon"
+        prdts_dt = []
+        total_rayon = 0
+        total_nb_produit = 0
+        for contenir in self.object.contenir_rayon.all():
+            total_produit = contenir.produits.prixUnitaireProd * contenir.qte
+            prdts_dt.append({ 'produit': contenir.produits,
+                'qte': contenir.qte,
+                'prix_unitaire': contenir.produits.prixUnitaireProd,
+                'total_produit': total_produit,
+            })
+            total_rayon += total_produit
+            total_nb_produit += contenir.qte
+
+        context['prdts_dt'] = prdts_dt
+        context['total_rayon'] = total_rayon
+        context['total_nb_produit'] = total_nb_produit
+
         return context
     
 class ConnectView(LoginView):
@@ -232,6 +295,7 @@ class EmailSentView(TemplateView):
 #         form = ProduitForm()
 #         return render(request, "monApp/create_produit.html", {'form': form})
     
+@method_decorator(login_required, name='dispatch')
 class ProduitCreateView(CreateView):
     model = Produit
     form_class = ProduitForm
@@ -242,6 +306,7 @@ class ProduitCreateView(CreateView):
         return redirect("prdt-dtl", prdt.refProd)
     
 
+@method_decorator(login_required, name='dispatch')
 class ProduitUpdateView(UpdateView):
     model = Produit
     form_class=ProduitForm
@@ -251,6 +316,7 @@ class ProduitUpdateView(UpdateView):
         prdt = form.save()
         return redirect('prdt-dtl', prdt.refProd)
     
+@method_decorator(login_required, name='dispatch')
 class ProduitDeleteView(DeleteView):
     model = Produit
     template_name = "monApp/delete_produit.html"
@@ -270,6 +336,7 @@ class ProduitDeleteView(DeleteView):
 #             form = ProduitForm(instance=prdt)
 #         return render(request,'monApp/update_produit.html', {'form': form})
 
+@method_decorator(login_required, name='dispatch')
 class CategorieCreateView(CreateView):
     model = Categorie
     form_class = CategorieForm
@@ -279,6 +346,7 @@ class CategorieCreateView(CreateView):
         categ = form.save()
         return redirect("categ-dtl", categ.idCat)
 
+@method_decorator(login_required, name='dispatch')
 class CategorieUpdateView(UpdateView):
     model = Categorie
     form_class=CategorieForm
@@ -288,12 +356,14 @@ class CategorieUpdateView(UpdateView):
         categ = form.save()
         return redirect('categ-dtl', categ.idCat)
     
+@method_decorator(login_required, name='dispatch')
 class CategorieDeleteView(DeleteView):
     model = Categorie
     template_name = "monApp/delete_categorie.html"
 
     success_url = reverse_lazy('lst-ctgrs')
 
+@method_decorator(login_required, name='dispatch')
 class RayonCreateView(CreateView):
     model = Rayon
     form_class = RayonForm
@@ -303,6 +373,7 @@ class RayonCreateView(CreateView):
         rayon = form.save()
         return redirect("liste_rayons")
 
+@method_decorator(login_required, name='dispatch')
 class RayonUpdateView(UpdateView):
     model = Rayon
     form_class= RayonForm
@@ -312,8 +383,58 @@ class RayonUpdateView(UpdateView):
         rayon = form.save()
         return redirect("rayon-dtl", rayon.idRayon)
     
+@method_decorator(login_required, name='dispatch')
 class RayonDeleteView(DeleteView):
     model = Rayon
     template_name = "monApp/delete_rayon.html"
 
     success_url = reverse_lazy('liste_rayons')
+
+@method_decorator(login_required, name='dispatch')
+class ContenirCreateView(TemplateView):
+    template_name = "monApp/create_contenir.html"
+
+    def get(self, request, **kwargs):
+        form = ContenirForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, **kwargs):
+        rayon_id = self.kwargs.get('pk')
+        form = ContenirForm(request.POST)
+        
+        if form.is_valid():
+            try:
+                rayon = Rayon.objects.get(pk=rayon_id)
+            except Rayon.DoesNotExist:
+                # Gérer l'erreur si le rayon n'existe pas
+                return HttpResponseNotFound("Rayon non trouvé")
+            
+            produit = form.cleaned_data['produits']
+            qte = form.cleaned_data['qte']
+            contenir, created = Contenir.objects.get_or_create(rayons=rayon, produits=produit)
+            if not created:
+                contenir.qte += qte
+            else:
+                contenir.qte = qte
+            contenir.save()
+            return redirect('rayon-dtl', rayon.idRayon)
+        return render(request, self.template_name, {'form': form})
+    
+class ContenirUpdateView(UpdateView):
+    model = Contenir
+    form_class=ContenirForm
+    template_name = "monApp/update_contenir.html"
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        contenir = form.save()
+        return redirect('rayon-dtl', contenir.rayons.idRayon)
+    
+class ContenirDeleteView(DeleteView):
+    model = Contenir
+    template_name = "monApp/delete_contenir.html"
+
+    def get_success_url(self) -> str:
+        contenir = self.get_object()
+        return reverse_lazy('rayon-dtl', kwargs={'pk': contenir.rayons.idRayon})
+    
+    

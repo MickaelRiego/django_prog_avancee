@@ -1,6 +1,6 @@
 from django import forms
 
-from monApp.models import Categorie, Produit, Rayon
+from monApp.models import Categorie, Contenir, Produit, Rayon
 
 
 class ContactUsForm(forms.Form):
@@ -23,3 +23,8 @@ class RayonForm(forms.ModelForm):
     class Meta:
         model = Rayon
         fields = "__all__"
+
+class ContenirForm(forms.ModelForm):
+    class Meta:
+        model = Contenir
+        exclude = ("rayons",)

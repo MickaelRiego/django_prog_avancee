@@ -43,7 +43,10 @@ INSTALLED_APPS = [
     'monApp',
     'debug_toolbar',
     'django_bootstrap5',
+    'django_extensions',
 ]
+
+LOGIN_URL = 'login'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

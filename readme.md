@@ -76,3 +76,10 @@
 - modification de catégorie et statut
 - Fin de la page 4
 - changement du style et vérification de tout les liste views
+
+## 07/10/2025
+- **TD4**
+- Installation de pygraphviz difficile sur windows donc je passe a la suite
+- ContenirCreateView faite
+- Page 12
+- TODO updateContenir deleteContenir
