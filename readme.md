@@ -87,3 +87,6 @@
 ## 09/10/2025
 - **TD4 finis**
 - Contenir : On ne peut pas mettre de valeur négative et quand on met a zero ça le supprime
+- **TP4**
+- test categorie form et test categorie model fait
+- page 4
