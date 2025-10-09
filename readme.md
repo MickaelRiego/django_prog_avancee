@@ -83,3 +83,7 @@
 - ContenirCreateView faite
 - Page 12
 - TODO updateContenir deleteContenir
+
+## 09/10/2025
+- **TD4 finis**
+- Contenir : On ne peut pas mettre de valeur négative et quand on met a zero ça le supprime

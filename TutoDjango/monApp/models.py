@@ -37,7 +37,7 @@ class Produit(models.Model):
 class Contenir(models.Model):
     rayons = models.ForeignKey(Rayon, on_delete=models.CASCADE, null=False, blank=False, default=0, related_name="contenir_rayon")
     produits = models.ForeignKey(Produit, on_delete=models.CASCADE, null=False, blank=False, default=0, related_name="contenir_produit")
-    qte = models.IntegerField(default=0)
+    qte = models.PositiveIntegerField(default=0)
 
     class Meta:
         unique_together = ('rayons', 'produits')

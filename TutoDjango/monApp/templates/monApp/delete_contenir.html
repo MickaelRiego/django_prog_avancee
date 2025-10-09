@@ -1,0 +1,21 @@
+{% extends 'monApp/base.html' %}
+{% block contenu %}
+
+<h2 class="mt-4 text-danger">Confirmation de Suppression</h2>
+
+<p>Êtes-vous sûr de vouloir supprimer l'association suivante :</p>
+
+<div class="alert alert-warning">
+    Produit : <strong>{{ object.produits.intituleProd }}</strong><br>
+    Rayon : <strong>{{ object.rayons.nomRayon }}</strong><br>
+    Quantité : <strong>{{ object.qte }}</strong>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Oui, Supprimer définitivement</button>
+
+    <a href="{% url 'rayon-dtl' pk=object.rayons.idRayon %}" class="btn btn-secondary">Annuler</a>
+</form>
+
+{% endblock contenu %}

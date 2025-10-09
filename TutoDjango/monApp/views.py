@@ -235,6 +235,7 @@ class RayonDetailView(DetailView):
                 'qte': contenir.qte,
                 'prix_unitaire': contenir.produits.prixUnitaireProd,
                 'total_produit': total_produit,
+                'contenir_pk': contenir.pk,
             })
             total_rayon += total_produit
             total_nb_produit += contenir.qte
@@ -412,6 +413,11 @@ class ContenirCreateView(TemplateView):
             produit = form.cleaned_data['produits']
             qte = form.cleaned_data['qte']
             contenir, created = Contenir.objects.get_or_create(rayons=rayon, produits=produit)
+            # Si la quantité est inférieur ou égale à 0, on supprime
+            if contenir.qte <= 0:
+                contenir.delete()
+                return redirect('rayon-dtl', pk=rayon_id)
+        
             if not created:
                 contenir.qte += qte
             else:
@@ -420,21 +426,36 @@ class ContenirCreateView(TemplateView):
             return redirect('rayon-dtl', rayon.idRayon)
         return render(request, self.template_name, {'form': form})
     
+
+@method_decorator(login_required, name='dispatch')
 class ContenirUpdateView(UpdateView):
     model = Contenir
-    form_class=ContenirForm
-    template_name = "monApp/update_contenir.html"
+    form_class = ContenirForm
+    template_name = "monApp/update_contenir.html" 
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         contenir = form.save()
-        return redirect('rayon-dtl', contenir.rayons.idRayon)
+        rayon_id = contenir.rayons.idRayon
+
+        if contenir.qte <= 0:
+            contenir.delete()
+            return redirect('rayon-dtl', pk=rayon_id)
+        
+        return redirect('rayon-dtl', pk=rayon_id)
     
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.views.generic import DeleteView
+from .models import Contenir
+
+@method_decorator(login_required, name='dispatch')
 class ContenirDeleteView(DeleteView):
     model = Contenir
+    
     template_name = "monApp/delete_contenir.html"
-
-    def get_success_url(self) -> str:
-        contenir = self.get_object()
-        return reverse_lazy('rayon-dtl', kwargs={'pk': contenir.rayons.idRayon})
     
-    
+    def get_success_url(self):
+        rayon_id = self.object.rayons.idRayon
+        
+        return reverse_lazy('rayon-dtl', kwargs={'pk': rayon_id})
